@@ -44,6 +44,8 @@ node --version
 
 Follow this workflow to add a new function that's available in all supported languages. We'll use Test-Driven Development (TDD) throughout.
 
+> **Real-world example:** See commit [`e27f782`](https://github.com/yourusername/rlib/commit/e27f782) which added the `exponent` function following this exact guide. It demonstrates the complete workflow from Core Rust to all language bindings with tests.
+
 ### Example: Adding a `subtract` function
 
 #### Step 1: Add to Core Rust Library (with TDD)
