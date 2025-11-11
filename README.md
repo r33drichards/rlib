@@ -1,6 +1,11 @@
 # rlib
 
-A multi-language Rust library demonstrating how to build once and distribute to multiple languages using C FFI.
+[![Release](https://github.com/r33drichards/rlib/actions/workflows/release.yml/badge.svg)](https://github.com/r33drichards/rlib/actions/workflows/release.yml)
+[![PyPI](https://img.shields.io/pypi/v/rlib)](https://pypi.org/project/rlib/)
+[![npm](https://img.shields.io/npm/v/@rlib/rlib)](https://www.npmjs.com/package/@rlib/rlib)
+[![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](LICENSE-MIT)
+
+A multi-language Rust library template demonstrating how to build once and distribute to multiple languages using C FFI.
 
 ## Features
 
@@ -10,15 +15,35 @@ A multi-language Rust library demonstrating how to build once and distribute to 
 - **Nix-based builds** - Reproducible builds and packaging
 - **Comprehensive examples** - See usage in every supported language
 
+## Installation
+
+### Python (PyPI)
+```bash
+pip install rlib
+```
+
+### Node.js (npm)
+```bash
+npm install @rlib/rlib
+```
+
+### Go
+```bash
+go get github.com/r33drichards/rlib-go@latest
+```
+
+### C/C++
+Download pre-built libraries from [GitHub Releases](https://github.com/r33drichards/rlib/releases).
+
 ## Supported Languages
 
 - **C** - Direct FFI usage
 - **C++** - Header-only wrapper with RAII and exceptions
 - **Go** - cgo bindings with idiomatic error handling
 - **Python** - ctypes wrapper with Pythonic API
-- **JavaScript/Node.js** - ffi-napi bindings
+- **JavaScript/Node.js** - koffi bindings
 
-## Quick Start
+## Development Quick Start
 
 ### Using Nix (Recommended)
 

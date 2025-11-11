@@ -1,0 +1,4 @@
+include ../../README.md
+include ../../LICENSE-MIT
+include ../../LICENSE-APACHE
+recursive-include rlib/lib *.so *.dylib *.dll

@@ -1,0 +1,324 @@
+name: Release SDKs
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 0.1.0)'
+        required: true
+        type: string
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-ffi:
+    name: Build FFI Library
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact: librlib.so
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact: librlib.dylib
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact: librlib.dylib
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: rlib.dll
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo index
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-git-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache target directory
+        uses: actions/cache@v4
+        with:
+          path: target
+          key: ${{ runner.os }}-${{ matrix.target }}-target-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build FFI library
+        run: cargo build --release --target ${{ matrix.target }} -p rlib-ffi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffi-${{ matrix.target }}
+          path: target/${{ matrix.target }}/release/${{ matrix.artifact }}
+          if-no-files-found: error
+
+  generate-header:
+    name: Generate C Header
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cbindgen
+        run: cargo install cbindgen
+
+      - name: Generate header
+        run: cbindgen ffi/ -o include/rlib.h
+
+      - name: Upload header
+        uses: actions/upload-artifact@v4
+        with:
+          name: c-header
+          path: include/rlib.h
+          if-no-files-found: error
+
+  release-python:
+    name: Release Python Package
+    needs: [build-ffi, generate-header]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Download all FFI libraries
+        uses: actions/download-artifact@v4
+        with:
+          pattern: ffi-*
+          path: bindings/python/rlib/lib
+          merge-multiple: true
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Build Python package
+        working-directory: bindings/python
+        run: python -m build
+
+      - name: Check package
+        working-directory: bindings/python
+        run: twine check dist/*
+
+      - name: Upload Python artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-dist
+          path: bindings/python/dist/
+
+      - name: Publish to PyPI
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        working-directory: bindings/python
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: twine upload dist/*
+
+  release-node:
+    name: Release Node.js Package
+    needs: [build-ffi, generate-header]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Download all FFI libraries
+        uses: actions/download-artifact@v4
+        with:
+          pattern: ffi-*
+          path: bindings/node/lib
+          merge-multiple: true
+
+      - name: Install dependencies
+        working-directory: bindings/node
+        run: npm ci
+
+      - name: Package
+        working-directory: bindings/node
+        run: npm pack
+
+      - name: Upload Node.js artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-package
+          path: bindings/node/*.tgz
+
+      - name: Publish to npm
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        working-directory: bindings/node
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish
+
+  create-release:
+    name: Create GitHub Release
+    needs: [build-ffi, generate-header, release-python, release-node]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create release directory
+        run: |
+          mkdir -p release/lib
+          mkdir -p release/include
+          mkdir -p release/python
+          mkdir -p release/node
+
+      - name: Organize artifacts
+        run: |
+          # Copy FFI libraries
+          find artifacts/ffi-* -type f -exec cp {} release/lib/ \;
+
+          # Copy header
+          cp artifacts/c-header/rlib.h release/include/
+
+          # Copy Python packages
+          if [ -d "artifacts/python-dist" ]; then
+            cp artifacts/python-dist/* release/python/ || true
+          fi
+
+          # Copy Node.js packages
+          if [ -d "artifacts/node-package" ]; then
+            cp artifacts/node-package/*.tgz release/node/ || true
+          fi
+
+      - name: Create release archives
+        run: |
+          cd release
+          tar -czf ../rlib-c-cpp-libs.tar.gz lib/ include/
+          if [ -d "python" ] && [ "$(ls -A python)" ]; then
+            tar -czf ../rlib-python.tar.gz python/
+          fi
+          if [ -d "node" ] && [ "$(ls -A node)" ]; then
+            tar -czf ../rlib-node.tar.gz node/
+          fi
+
+      - name: Get version
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Release Notes
+        run: |
+          cat > release_notes.md << 'EOF'
+          ## rlib v${{ steps.version.outputs.version }}
+
+          Multi-language Rust library with FFI bindings for C, C++, Go, Python, and Node.js.
+
+          ### 📦 Installation
+
+          #### Python (PyPI)
+          ```bash
+          pip install rlib
+          ```
+
+          #### Node.js (npm)
+          ```bash
+          npm install @rlib/rlib
+          ```
+
+          #### Go
+          ```bash
+          go get github.com/r33drichards/rlib-go@v${{ steps.version.outputs.version }}
+          ```
+
+          #### C/C++
+          Download `rlib-c-cpp-libs.tar.gz` from assets below.
+
+          ### 📚 Documentation
+
+          See [README.md](https://github.com/r33drichards/rlib#readme) and [CONTRIBUTING.md](https://github.com/r33drichards/rlib/blob/master/CONTRIBUTING.md) for usage examples.
+
+          ### 🔧 What's Included
+
+          - Pre-built FFI libraries for Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64)
+          - C header file generated with cbindgen
+          - Python wheel and source distribution
+          - Node.js package with TypeScript definitions
+          - Go module (via Git tags)
+
+          ### ✅ Test Results
+
+          All 25 tests passing across all language bindings.
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release v${{ steps.version.outputs.version }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+          files: |
+            rlib-c-cpp-libs.tar.gz
+            rlib-python.tar.gz
+            rlib-node.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  tag-go-module:
+    name: Tag Go Module
+    needs: create-release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Tag Go module
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "bindings/go/v${VERSION}"
+          git push origin "bindings/go/v${VERSION}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

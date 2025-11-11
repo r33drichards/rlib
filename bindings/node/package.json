@@ -7,9 +7,26 @@
   "scripts": {
     "test": "node test/test.js"
   },
-  "keywords": ["rust", "ffi", "bindings"],
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib/*.so",
+    "lib/*.dylib",
+    "lib/*.dll",
+    "README.md"
+  ],
+  "keywords": ["rust", "ffi", "bindings", "multi-language"],
   "author": "rlib contributors",
   "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/r33drichards/rlib.git",
+    "directory": "bindings/node"
+  },
+  "homepage": "https://github.com/r33drichards/rlib#readme",
+  "bugs": {
+    "url": "https://github.com/r33drichards/rlib/issues"
+  },
   "dependencies": {
     "koffi": "^2.9.0"
   }

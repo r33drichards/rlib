@@ -14,6 +14,7 @@ else:
 
 # Try to find library in multiple locations
 lib_locations = [
+    Path(__file__).parent / "lib" / f"librlib.{lib_ext}",  # Packaged location
     Path(__file__).parent / f"librlib.{lib_ext}",
     Path(__file__).parent.parent.parent.parent / "target" / "release" / f"librlib.{lib_ext}",
 ]

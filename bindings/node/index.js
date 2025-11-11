@@ -14,6 +14,7 @@ if (os.platform() === 'darwin') {
 
 // Try multiple library locations
 const libLocations = [
+  path.join(__dirname, 'lib', `librlib.${libExt}`),  // Packaged location
   path.join(__dirname, `librlib.${libExt}`),
   path.join(__dirname, '..', '..', 'target', 'release', `librlib.${libExt}`),
 ];
