@@ -19,6 +19,9 @@
           extensions = [ "rust-src" "rust-analyzer" ];
         };
 
+        # Python environment with pytest
+        pythonEnv = pkgs.python3.withPackages (ps: [ ps.pytest ]);
+
         # FFI shared library
         rlib-ffi = pkgs.rustPlatform.buildRustPackage {
           pname = "rlib-ffi";
@@ -146,7 +149,7 @@
               echo ""
               echo "Testing Python bindings..."
               cd bindings/python
-              ${pkgs.python3Packages.pytest}/bin/pytest tests/ -v
+              PYTHONPATH=. ${pythonEnv}/bin/pytest tests/ -v
               cd ../..
 
               echo ""
