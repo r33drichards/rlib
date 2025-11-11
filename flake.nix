@@ -146,7 +146,7 @@
               echo ""
               echo "Testing Python bindings..."
               cd bindings/python
-              ${pkgs.python3}/bin/python -m pytest tests/ -v
+              ${pkgs.python3Packages.pytest}/bin/pytest tests/ -v
               cd ../..
 
               echo ""
