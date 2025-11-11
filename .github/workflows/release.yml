@@ -133,8 +133,18 @@ jobs:
           name: python-dist
           path: bindings/python/dist/
 
+      - name: Check PyPI Token
+        id: check_pypi
+        run: |
+          if [ -n "${{ secrets.PYPI_API_TOKEN }}" ]; then
+            echo "has_token=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_token=false" >> $GITHUB_OUTPUT
+            echo "⚠️  PYPI_API_TOKEN not configured - skipping PyPI publish"
+          fi
+
       - name: Publish to PyPI
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && secrets.PYPI_API_TOKEN != ''
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && steps.check_pypi.outputs.has_token == 'true'
         working-directory: bindings/python
         env:
           TWINE_USERNAME: __token__
@@ -176,8 +186,18 @@ jobs:
           name: node-package
           path: bindings/node/*.tgz
 
+      - name: Check npm Token
+        id: check_npm
+        run: |
+          if [ -n "${{ secrets.NPM_TOKEN }}" ]; then
+            echo "has_token=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_token=false" >> $GITHUB_OUTPUT
+            echo "⚠️  NPM_TOKEN not configured - skipping npm publish"
+          fi
+
       - name: Publish to npm
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && secrets.NPM_TOKEN != ''
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && steps.check_npm.outputs.has_token == 'true'
         working-directory: bindings/node
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
