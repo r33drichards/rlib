@@ -134,7 +134,7 @@ jobs:
           path: bindings/python/dist/
 
       - name: Publish to PyPI
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && secrets.PYPI_API_TOKEN != ''
         working-directory: bindings/python
         env:
           TWINE_USERNAME: __token__
@@ -177,7 +177,7 @@ jobs:
           path: bindings/node/*.tgz
 
       - name: Publish to npm
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && secrets.NPM_TOKEN != ''
         working-directory: bindings/node
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

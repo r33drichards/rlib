@@ -13,9 +13,41 @@ Before creating a release, ensure:
    - `ffi/Cargo.toml`
    - `bindings/python/setup.py`
    - `bindings/node/package.json`
-4. You have the necessary API tokens configured as GitHub secrets:
-   - `PYPI_API_TOKEN` - For publishing to PyPI
-   - `NPM_TOKEN` - For publishing to npm
+4. You have the necessary API tokens configured as GitHub secrets (see setup below)
+
+### Setting Up GitHub Secrets (Required for Auto-Publishing)
+
+The release workflow uses GitHub secrets to publish packages. Configure these in your repository:
+
+**To add secrets:**
+1. Go to your GitHub repository
+2. Navigate to Settings → Secrets and variables → Actions
+3. Click "New repository secret"
+4. Add the following secrets:
+
+#### PYPI_API_TOKEN
+- **Purpose**: Publishes Python package to PyPI automatically
+- **How to create**:
+  1. Go to https://pypi.org/manage/account/token/
+  2. Create a new API token (scope: entire account, or specific to rlib project)
+  3. Copy the token (starts with `pypi-`)
+  4. Add as `PYPI_API_TOKEN` in GitHub secrets
+
+#### NPM_TOKEN
+- **Purpose**: Publishes Node.js package to npm automatically
+- **How to create**:
+  1. Go to https://www.npmjs.com/settings/~/tokens
+  2. Generate new token → Classic Token → Automation
+  3. Copy the token
+  4. Add as `NPM_TOKEN` in GitHub secrets
+
+**Note:** If these secrets are not configured, the workflow will still:
+- Build all FFI libraries
+- Generate C headers
+- Create GitHub Release with downloadable artifacts
+- Tag Go module
+
+You just won't get automatic publishing to PyPI/npm (you can publish manually instead).
 
 ## Creating a Release
 
