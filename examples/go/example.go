@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	rlib "github.com/yourusername/rlib-go"
+	rlib "github.com/r33drichards/rlib-go"
 )
 
 func main() {

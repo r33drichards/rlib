@@ -103,7 +103,7 @@ int main() {
 ### Go
 
 ```go
-import rlib "github.com/yourusername/rlib-go"
+import rlib "github.com/r33drichards/rlib-go"
 
 sum := rlib.Add(10, 5)
 
