@@ -45,8 +45,8 @@ pub extern "C" fn rlib_divide(a: c_int, b: c_int, result: *mut c_int) -> RlibErr
 #[no_mangle]
 pub extern "C" fn rlib_error_message(error: RlibError) -> *const c_char {
     match error {
-        RlibError::Ok => "Success\0".as_ptr() as *const c_char,
-        RlibError::DivisionByZero => "Division by zero\0".as_ptr() as *const c_char,
-        RlibError::InvalidArgument => "Invalid argument\0".as_ptr() as *const c_char,
+        RlibError::Ok => b"Success\0".as_ptr() as *const c_char,
+        RlibError::DivisionByZero => b"Division by zero\0".as_ptr() as *const c_char,
+        RlibError::InvalidArgument => b"Invalid argument\0".as_ptr() as *const c_char,
     }
 }
