@@ -39,6 +39,7 @@ const lib = koffi.load(libPath);
 // Define function signatures
 const rlib_add = lib.func('rlib_add', 'int', ['int', 'int']);
 const rlib_multiply = lib.func('rlib_multiply', 'int', ['int', 'int']);
+const rlib_exponent = lib.func('rlib_exponent', 'int', ['int', 'int']);
 const rlib_divide = lib.func('rlib_divide', 'int', ['int', 'int', koffi.out(koffi.pointer('int'))]);
 const rlib_error_message = lib.func('rlib_error_message', 'string', ['int']);
 
@@ -56,6 +57,10 @@ function multiply(a, b) {
   return rlib_multiply(a, b);
 }
 
+function exponent(base, exp) {
+  return rlib_exponent(base, exp);
+}
+
 function divide(a, b) {
   const result = [0];
   const error = rlib_divide(a, b, result);
@@ -68,4 +73,4 @@ function divide(a, b) {
   return result[0];
 }
 
-module.exports = { add, multiply, divide };
+module.exports = { add, multiply, exponent, divide };

@@ -36,6 +36,13 @@ inline int multiply(int a, int b) {
 }
 
 /**
+ * Raise base to the power of exponent
+ */
+inline int exponent(int base, int exp) {
+    return rlib_exponent(base, exp);
+}
+
+/**
  * Divide two integers
  * @throws Error if division by zero
  */

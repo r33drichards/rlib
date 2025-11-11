@@ -14,6 +14,10 @@ console.log(`10 + 5 = ${sum}`);
 const product = rlib.multiply(10, 5);
 console.log(`10 * 5 = ${product}`);
 
+// Test exponent
+const power = rlib.exponent(2, 8);
+console.log(`2 ^ 8 = ${power}`);
+
 // Test divide (success)
 const quotient = rlib.divide(10, 5);
 console.log(`10 / 5 = ${quotient}`);

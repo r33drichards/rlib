@@ -17,6 +17,14 @@ void test_multiply() {
     std::cout << "✓ test_multiply" << std::endl;
 }
 
+void test_exponent() {
+    assert(rlib::exponent(2, 3) == 8);
+    assert(rlib::exponent(5, 2) == 25);
+    assert(rlib::exponent(10, 0) == 1);
+    assert(rlib::exponent(3, 4) == 81);
+    std::cout << "✓ test_exponent" << std::endl;
+}
+
 void test_divide() {
     assert(rlib::divide(6, 2) == 3);
     assert(rlib::divide(10, 5) == 2);
@@ -38,6 +46,7 @@ void test_divide_by_zero() {
 int main() {
     test_add();
     test_multiply();
+    test_exponent();
     test_divide();
     test_divide_by_zero();
     std::cout << "\nAll tests passed!" << std::endl;

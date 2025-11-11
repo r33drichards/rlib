@@ -17,6 +17,11 @@ func Multiply(a, b int) int {
 	return int(C.rlib_multiply(C.int(a), C.int(b)))
 }
 
+// Exponent raises base to the power of exp
+func Exponent(base, exp int) int {
+	return int(C.rlib_exponent(C.int(base), C.int(exp)))
+}
+
 // Divide two integers
 func Divide(a, b int) (int, error) {
 	var result C.int

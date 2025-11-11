@@ -20,6 +20,10 @@ func main() {
 	product := rlib.Multiply(10, 5)
 	fmt.Printf("10 * 5 = %d\n", product)
 
+	// Test exponent
+	power := rlib.Exponent(2, 8)
+	fmt.Printf("2 ^ 8 = %d\n", power)
+
 	// Test divide (success)
 	quotient, err := rlib.Divide(10, 5)
 	if err != nil {

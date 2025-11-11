@@ -13,6 +13,10 @@ int main() {
     int product = rlib::multiply(10, 5);
     std::cout << "10 * 5 = " << product << std::endl;
 
+    // Test exponent
+    int power = rlib::exponent(2, 8);
+    std::cout << "2 ^ 8 = " << power << std::endl;
+
     // Test divide (success)
     try {
         int quotient = rlib::divide(10, 5);

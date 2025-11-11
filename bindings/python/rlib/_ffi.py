@@ -41,6 +41,9 @@ _lib.rlib_add.restype = ctypes.c_int
 _lib.rlib_multiply.argtypes = [ctypes.c_int, ctypes.c_int]
 _lib.rlib_multiply.restype = ctypes.c_int
 
+_lib.rlib_exponent.argtypes = [ctypes.c_int, ctypes.c_int]
+_lib.rlib_exponent.restype = ctypes.c_int
+
 _lib.rlib_divide.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.POINTER(ctypes.c_int)]
 _lib.rlib_divide.restype = ctypes.c_int
 
@@ -54,6 +57,10 @@ def add(a: int, b: int) -> int:
 def multiply(a: int, b: int) -> int:
     """Multiply two integers."""
     return _lib.rlib_multiply(a, b)
+
+def exponent(base: int, exp: int) -> int:
+    """Raise base to the power of exponent."""
+    return _lib.rlib_exponent(base, exp)
 
 def divide(a: int, b: int) -> int:
     """Divide two integers. Raises ValueError on division by zero."""

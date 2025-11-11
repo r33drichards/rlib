@@ -24,6 +24,13 @@ test('multiply', () => {
   assert.strictEqual(rlib.multiply(0, 5), 0);
 });
 
+test('exponent', () => {
+  assert.strictEqual(rlib.exponent(2, 3), 8);
+  assert.strictEqual(rlib.exponent(5, 2), 25);
+  assert.strictEqual(rlib.exponent(10, 0), 1);
+  assert.strictEqual(rlib.exponent(3, 4), 81);
+});
+
 test('divide', () => {
   assert.strictEqual(rlib.divide(6, 2), 3);
   assert.strictEqual(rlib.divide(10, 5), 2);

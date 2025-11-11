@@ -24,6 +24,12 @@ pub extern "C" fn rlib_multiply(a: c_int, b: c_int) -> c_int {
     rlib_core::multiply(a, b)
 }
 
+/// Raise base to the power of exponent
+#[no_mangle]
+pub extern "C" fn rlib_exponent(base: c_int, exp: c_int) -> c_int {
+    rlib_core::exponent(base, exp)
+}
+
 /// Divide two integers
 /// Returns the result via out parameter, returns error code
 #[no_mangle]

@@ -18,6 +18,11 @@ pub fn divide(a: i32, b: i32) -> Result<i32, String> {
     }
 }
 
+/// Raise base to the power of exponent
+pub fn exponent(base: i32, exp: i32) -> i32 {
+    base.pow(exp as u32)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -48,5 +53,13 @@ mod tests {
         let result = divide(10, 0);
         assert!(result.is_err());
         assert_eq!(result.unwrap_err(), "Division by zero");
+    }
+
+    #[test]
+    fn test_exponent() {
+        assert_eq!(exponent(2, 3), 8);
+        assert_eq!(exponent(5, 2), 25);
+        assert_eq!(exponent(10, 0), 1);
+        assert_eq!(exponent(3, 4), 81);
     }
 }

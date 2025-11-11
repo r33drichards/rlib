@@ -14,6 +14,13 @@ def test_multiply():
     assert rlib.multiply(-2, 3) == -6
     assert rlib.multiply(0, 5) == 0
 
+def test_exponent():
+    """Test exponent function."""
+    assert rlib.exponent(2, 3) == 8
+    assert rlib.exponent(5, 2) == 25
+    assert rlib.exponent(10, 0) == 1
+    assert rlib.exponent(3, 4) == 81
+
 def test_divide():
     """Test division function."""
     assert rlib.divide(6, 2) == 3

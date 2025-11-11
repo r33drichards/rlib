@@ -9,6 +9,11 @@ export function add(a: number, b: number): number;
 export function multiply(a: number, b: number): number;
 
 /**
+ * Raise base to the power of exponent
+ */
+export function exponent(base: number, exp: number): number;
+
+/**
  * Divide two integers
  * @throws {Error} If division by zero
  */

@@ -1,6 +1,6 @@
 """rlib - Multi-language Rust library."""
 
-from rlib._ffi import add, multiply, divide
+from rlib._ffi import add, multiply, exponent, divide
 
 __version__ = "0.1.0"
-__all__ = ["add", "multiply", "divide"]
+__all__ = ["add", "multiply", "exponent", "divide"]

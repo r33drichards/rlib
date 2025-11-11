@@ -22,6 +22,10 @@ def main():
     product = rlib.multiply(10, 5)
     print(f"10 * 5 = {product}")
 
+    # Test exponent
+    power = rlib.exponent(2, 8)
+    print(f"2 ^ 8 = {power}")
+
     # Test divide (success)
     quotient = rlib.divide(10, 5)
     print(f"10 / 5 = {quotient}")

@@ -36,6 +36,24 @@ func TestMultiply(t *testing.T) {
 	}
 }
 
+func TestExponent(t *testing.T) {
+	tests := []struct {
+		base, exp, want int
+	}{
+		{2, 3, 8},
+		{5, 2, 25},
+		{10, 0, 1},
+		{3, 4, 81},
+	}
+
+	for _, tt := range tests {
+		got := Exponent(tt.base, tt.exp)
+		if got != tt.want {
+			t.Errorf("Exponent(%d, %d) = %d; want %d", tt.base, tt.exp, got, tt.want)
+		}
+	}
+}
+
 func TestDivide(t *testing.T) {
 	tests := []struct {
 		a, b, want int

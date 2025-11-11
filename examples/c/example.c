@@ -13,6 +13,10 @@ int main() {
     int product = rlib_multiply(10, 5);
     printf("10 * 5 = %d\n", product);
 
+    // Test exponent
+    int power = rlib_exponent(2, 8);
+    printf("2 ^ 8 = %d\n", power);
+
     // Test divide (success)
     int quotient;
     rlib_error_t err = rlib_divide(10, 5, &quotient);
