@@ -1,0 +1,16 @@
+[package]
+name = "rlib-ffi"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+name = "rlib"
+
+[dependencies]
+rlib-core = { path = "../core" }
+
+[build-dependencies]
+cbindgen = "0.26"
