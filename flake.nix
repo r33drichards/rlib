@@ -141,7 +141,7 @@
               echo ""
               echo "Generating C header..."
               mkdir -p include
-              ${pkgs.cbindgen}/bin/cbindgen ffi/ -o include/rlib.h
+              ${pkgs.rust-cbindgen}/bin/cbindgen ffi/ -o include/rlib.h
 
               echo ""
               echo "Testing Python bindings..."
